@@ -35,6 +35,12 @@ class CsvConverter implements CsvConverterInterface
             $max_count = min(count($keys), count($values));
             for ($i = 0; $i < $max_count; $i++) {
                 $key = ConverterCollumns::getCollumn(trim($keys[$i]));
+                if(in_array($key, ['price', 'priceSP'])) {
+                    $values[$i] = floatval(preg_replace("/[^0-9.]/", "", $values[$i]));
+                }
+                if($key === 'featured') {
+                    $values[$i] = intval(trim($values[$i]));
+                }
                 $result[$key] = trim($values[$i]);
             }
 

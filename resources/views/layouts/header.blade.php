@@ -15,7 +15,7 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link {{ active_link("result*") }}" href="{{ route('result') }}">
+                    <a class="nav-link {{ active_link("csv*") }}" href="{{ route('csv') }}">
                         {{ __('Result') }}
                     </a>
                 </li>

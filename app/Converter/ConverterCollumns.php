@@ -4,7 +4,7 @@ namespace App\Converter;
 
 class ConverterCollumns
 {
-    private static $collumns = [
+    private static array $collumns = [
         "Код"=>"sku",
         "Наименование"=>"title",
         "Уровень1"=>"level1",
@@ -28,5 +28,10 @@ class ConverterCollumns
         }
 
         return  $name;
+    }
+
+    public static function compare(array $headers): bool
+    {
+        return array_values(self::$collumns) === $headers;
     }
 }

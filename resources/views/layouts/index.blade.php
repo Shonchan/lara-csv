@@ -10,7 +10,7 @@
           crossorigin="anonymous" referrerpolicy="no-referrer"/>
     <style>
         .container {
-            max-width: 720px;
+            /*max-width: 720px;*/
         }
         .required:after {
             content: "*";

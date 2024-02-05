@@ -11,7 +11,7 @@
     {{ $slot }}
 
     @unless ($method === 'GET')
-            @csrf
+        @csrf
     @endunless
 
 </form>

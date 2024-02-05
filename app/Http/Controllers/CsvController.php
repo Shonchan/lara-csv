@@ -2,12 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Converter\CsvConverter;
+use App\Converter\ConverterCollumns;
+use App\Http\Requests\UploadCsvRequest;
 use App\Models\Product;
-use Illuminate\Http\Request;
-use Illuminate\Support\LazyCollection;
-use League\Csv\Exception;
-use League\Csv\Reader;
+use App\Services\ImportCsvService;
 
 class CsvController extends Controller
 {
@@ -15,28 +13,25 @@ class CsvController extends Controller
     {
         $products = Product::query()->paginate(20);
 
-        return  view('result.index', compact('products'));
+        $tableHeaders = array_merge(['id' => '#'], ConverterCollumns::getCollumnsAliases());
+
+        return view('csv.index', compact('products', 'tableHeaders'));
     }
 
-    public function upload(Request $request)
+    public function upload(UploadCsvRequest $request, ImportCsvService $service)
     {
-        if(!$request->hasFile('csv')){
-            return redirect()->back()->with(['error' => 'Не загружен csv файл']);
+        if (!$request->hasFile('csv_file')) {
+            return redirect()->back()->withErrors(['error' => 'Не загружен csv файл']);
+        }
+        try {
+            $file = $request->file('csv_file');
+            $file->move(app_path('upload'), 'file.csv');
+
+            $service->import(app_path('upload/file.csv'));
+        } catch (\Exception $e) {
+            return redirect()->back()->withErrors(['error' => $e->getMessage()]);
         }
 
-        Product::query()->truncate();
-
-        $file = $request->file('csv');
-        $file->storeAs('upload', 'file.csv' );
-
-        $collection = CsvConverter::convert(storage_path('app/upload/file.csv'));
-
-
-        foreach ($collection as $product_array) {
-            $product = new Product($product_array);
-            $product->save();
-        }
-
-        return  redirect()->route('csv');
+        return redirect()->route('csv');
     }
 }

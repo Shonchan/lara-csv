@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Converter\ConverterCollumns;
 use App\Http\Requests\UploadCsvRequest;
 use App\Models\Product;
 use App\Services\ImportCsvService;
@@ -12,7 +13,9 @@ class CsvController extends Controller
     {
         $products = Product::query()->paginate(20);
 
-        return view('result.index', compact('products'));
+        $tableHeaders = array_merge(['id' => '#'], ConverterCollumns::getCollumnsAliases());
+
+        return view('csv.index', compact('products', 'tableHeaders'));
     }
 
     public function upload(UploadCsvRequest $request, ImportCsvService $service)
@@ -22,9 +25,9 @@ class CsvController extends Controller
         }
         try {
             $file = $request->file('csv_file');
-            $file->storeAs('upload', 'file.csv');
+            $file->move(app_path('upload'), 'file.csv');
 
-            $service->import(storage_path('app/upload/file.csv'));
+            $service->import(app_path('upload/file.csv'));
         } catch (\Exception $e) {
             return redirect()->back()->withErrors(['error' => $e->getMessage()]);
         }

@@ -13,7 +13,9 @@ class CsvController extends Controller
 {
     public function index()
     {
+        $products = Product::query()->paginate(20);
 
+        return  view('result.index', compact('products'));
     }
 
     public function upload(Request $request)
@@ -35,6 +37,6 @@ class CsvController extends Controller
             $product->save();
         }
 
-        dd(Product::all());
+        return  redirect()->route('csv');
     }
 }

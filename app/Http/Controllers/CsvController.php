@@ -25,9 +25,9 @@ class CsvController extends Controller
         }
         try {
             $file = $request->file('csv_file');
-            $file->move(app_path('upload'), 'file.csv');
+            $file->move(storage_path('app/upload'), 'file.csv');
 
-            $service->import(app_path('upload/file.csv'));
+            $service->import(storage_path('app/upload/file.csv'));
         } catch (\Exception $e) {
             return redirect()->back()->withErrors(['error' => $e->getMessage()]);
         }
